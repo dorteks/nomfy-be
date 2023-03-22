@@ -1,10 +1,9 @@
 import {
+  Length,
   IsEmail,
+  IsString,
   IsNotEmpty,
   IsPhoneNumber,
-  isString,
-  IsString,
-  Length,
 } from 'class-validator';
 import {
   PASSWORD_MAX_LENGTH,
