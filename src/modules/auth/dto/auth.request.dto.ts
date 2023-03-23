@@ -1,19 +1,19 @@
 import {
+  Length,
   IsEmail,
+  IsString,
   IsNotEmpty,
   IsPhoneNumber,
-  isString,
-  IsString,
-  Length,
 } from 'class-validator';
 import {
+  OTP_LENGTH,
   PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
 } from 'src/core/constants/values';
 
 export class CreateUserBody {
-  @IsString()
   @IsEmail()
+  @IsString()
   @IsNotEmpty()
   email: string;
 
@@ -45,4 +45,35 @@ export class CreateUserBody {
   @IsString()
   @IsNotEmpty()
   role: string;
+}
+
+export class VerifyOtpBody {
+  @IsEmail()
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Length(OTP_LENGTH, OTP_LENGTH)
+  otp: string;
+}
+
+export class ForgotPasswordBody {
+  @IsEmail()
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+}
+
+export class ResetPasswordBody {
+  @IsEmail()
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Length(PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH)
+  password: string;
 }
