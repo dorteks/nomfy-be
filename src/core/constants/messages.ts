@@ -8,3 +8,7 @@ export const MESSAGES = {
   INCORRECT_PIN:
     'You entered an incorrect pin. Check your mail and try again! 😿',
 };
+
+export const jwtConstants = {
+  secret: process.env.SECRET,
+};

@@ -75,5 +75,5 @@ export class ResetPasswordBody {
   @IsString()
   @IsNotEmpty()
   @Length(PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH)
-  newPassword: string;
+  password: string;
 }

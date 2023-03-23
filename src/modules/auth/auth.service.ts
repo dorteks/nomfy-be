@@ -4,6 +4,7 @@ import {
   ResetPasswordBody,
   ForgotPasswordBody,
 } from './dto/auth.request.dto';
+import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { Argon2 } from 'src/core/utils/argon2';
 import { MESSAGES } from 'src/core/constants/messages';
@@ -14,8 +15,31 @@ import { generateHash, generateOtp } from 'src/core/utils/generate';
 export class AuthService {
   constructor(
     private readonly argon2: Argon2,
+    private readonly jwt: JwtService,
     private readonly prisma: PrismaService,
   ) {}
+
+  async validateUser(email: string, password: string): Promise<any> {
+    const user = await this.prisma.user.findUnique({
+      where: { email: email },
+      select: { email: true, password: true, id: true },
+    });
+
+    if (user && (await this.argon2.verify(user.password, password))) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return undefined;
+  }
+
+  async login(user: any) {
+    const payload = { username: user.email, sub: user.id };
+
+    const accessToken = this.jwt.sign(payload);
+    console.log(accessToken);
+
+    return { accessToken };
+  }
 
   async forgotPassword(body: ForgotPasswordBody) {
     const user = await this.prisma.user.findUnique({
@@ -29,11 +53,9 @@ export class AuthService {
   }
 
   async resetPassword(body: ResetPasswordBody) {
-    const newPassword = await this.argon2.hash(body.newPassword);
-
     return await this.prisma.user.update({
       where: { email: body.email },
-      data: { password: newPassword },
+      data: { password: await this.argon2.hash(body.password) },
     });
   }
 
